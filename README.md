@@ -2,9 +2,9 @@
 > sudo pip install tornado  
 > sudo pip install paramiko  
 
-  wget https://github.com/codemeow5/cloudtools/raw/master/modules/mqtt/mosquitto-install.sh
-  chmod u+x mosquitto-install.sh
-  sudo ./mosquitto-install.sh
+    wget https://github.com/codemeow5/cloudtools/raw/master/modules/mqtt/mosquitto-install.sh
+    chmod u+x mosquitto-install.sh
+    sudo ./mosquitto-install.sh
   
 > sudo python web.py  
 > sudo python web.py -d
