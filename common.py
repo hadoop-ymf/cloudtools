@@ -74,10 +74,10 @@ class SSH(object):
 	def cmd(self, cmd, sudo = False, all_ = True, *hosts):
 		if all_:
 			for (host, channel) in self.channels.items():
-				self.write('[%s][%s] Execute \'%s\'\n' % (datetime.datetime.now(), host, cmd))
+				self.write('[%s][%s] Execute \'%s\'\r\n' % (datetime.datetime.now(), host, cmd))
 				if sudo:
 					channel.exec_command('sudo -k %s' % cmd)
-					channel.send(self.password[host] + '\n')
+					channel.send(self.password[host] + '\r\n')
 				else:
 					channel.exec_command(cmd)
 				while True:
@@ -97,10 +97,10 @@ class SSH(object):
 				if host not in self.channels:
 					continue
 				channel = self.channels[host]
-				self.write('[%s][%s] Execute \'%s\'\n' % (datetime.datetime.now(), host, cmd))
+				self.write('[%s][%s] Execute \'%s\'\r\n' % (datetime.datetime.now(), host, cmd))
 				if sudo:
 					channel.exec_command('sudo -k %s' % cmd)
-					channel.send(self.password[host] + '\n')
+					channel.send(self.password[host] + '\r\n')
 				else:
 					channel.exec_command(cmd)
 				while True:
@@ -119,20 +119,20 @@ class SSH(object):
 	def upload(self, localFile, remoteFile, all_ = True, *hosts):
 		if all_:
 			for (host, sftp) in self.sftps.items():
-				self.write('[%s][%s] Beginning to upload file %s\n' % \
+				self.write('[%s][%s] Beginning to upload file %s\r\n' % \
 					(datetime.datetime.now(), host, localFile))
 				sftp.put(localFile, remoteFile)
-				self.write('[%s][%s] Upload file success %s\n' % \
+				self.write('[%s][%s] Upload file success %s\r\n' % \
 					(datetime.datetime.now(), host, localFile))
 		else:
 			for host in hosts:
 				if host not in self.sftps:
 					continue
 				sftp = self.sftps[host]
-				self.write('[%s][%s] Beginning to upload file %s\n' % \
+				self.write('[%s][%s] Beginning to upload file %s\r\n' % \
 					(datetime.datetime.now(), host, localFile))
 				sftp.put(localFile, remoteFile)
-				self.write('[%s][%s] Upload file success %s\n' % \
+				self.write('[%s][%s] Upload file success %s\r\n' % \
 					(datetime.datetime.now(), host, localFile))
 
 	def close(self):

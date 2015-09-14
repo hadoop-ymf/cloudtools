@@ -6,6 +6,21 @@
     <link rel="stylesheet" type="text/css" href="/static/styles/index.css" />
     <script type="text/javascript" src="/static/scripts/jquery.js"></script>
     <script type="text/javascript" src="/static/scripts/mqttws31.js"></script>
+    <script type="text/javascript" src="/static/scripts/term.js"></script>
+    <style type="text/css">
+    	.terminal {
+    	  float: left;
+    	  border: #000 solid 5px;
+    	  font-family: "DejaVu Sans Mono", "Liberation Mono", monospace;
+    	  font-size: 11px;
+    	  color: #f0f0f0;
+    	  background: #000;
+    	}
+    	.terminal-cursor {
+    	  color: #000;
+    	  background: #f0f0f0;
+    	}
+    </style>
     <script type="text/javascript">
 
         function getquerystring() {
@@ -22,24 +37,29 @@
         }
 
         $(function () {
-            $(window).resize(function () {
-                $('#tty').width($(window).width());
-                $('#tty').height($(window).height());
-            });
+	    var term = new Terminal({
+		cols: 180,
+		rows: 24,
+		useStyle: true,
+		screenKeys: true,
+		cursorBlink: false
+	    });
+
+	    term.open(document.body);
 
             var d = getquerystring();
             if (!!d['tty']) {
                 var ttyid = d['tty'];
                 var client = new Paho.MQTT.Client(
-                    "tangramcloud.com", 9001, '/mqtt', 'webshell/' + ttyid);
+                    "192.168.102.86", 9001, '/mqtt', 'webshell/' + ttyid);
                 client.onConnectionLost = function (responseObject) {
                     if (responseObject.errorCode !== 0) {
-                        alert("onConnectionLost:" + responseObject.errorMessage);
+                        term.write("onConnectionLost:" + responseObject.errorMessage);
+			term.destroy();
                     }
                 }
                 client.onMessageArrived = function (message) {
-                    var raw = $('#tty').text();
-                    $('#tty').text(raw + message.payloadString);
+		    term.write(message.payloadString);
                 }
                 client.connect({
                     onSuccess: function () {
@@ -54,7 +74,6 @@
 
     </script>
 </head>
-<body class="tty-box">
-    <textarea readonly="readonly" class="tty" id="tty"></textarea>
+<body>
 </body>
 </html>
