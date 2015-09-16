@@ -28,7 +28,7 @@ def deamon(chdir = False):
 	os.setsid()
 	os.umask(0)
 
-class IndexHandler(tornado.web.RequestHandler):
+class HostHandler(tornado.web.RequestHandler):
 	def load(self):
 		if not 'data' in dir(self):
 			f = open('data.json', 'r')
@@ -39,11 +39,11 @@ class IndexHandler(tornado.web.RequestHandler):
 	def get(self):
 		self.load()
 		index = self.request.uri
-		index = index[index.rfind('/') + 1:]
+		index = index[index.rfind('/host/') + 6:]
 		if index is None or len(index) == 0:
 			index = 1
 		index = int(index)
-		self.render("html/index.html", icons = self.data[(index - 1) * 24: index * 24])
+		self.render("html/host.html", icons = self.data[(index - 1) * 24: index * 24])
 
 class ToolHandler(tornado.web.RequestHandler):
 	def load(self):
@@ -56,7 +56,7 @@ class ToolHandler(tornado.web.RequestHandler):
 	def get(self):
 		self.load()
 		index = self.request.uri
-		index = index[index.rfind('/tool/') + 6:]
+		index = index[index.rfind('/') + 1:]
 		if index is None or len(index) == 0:
 			index = 1
 		index = int(index)
@@ -145,10 +145,10 @@ settings = {
 }
 
 application = tornado.web.Application([
-	(r"/", IndexHandler),
-	(r"/\d+", IndexHandler),
-	(r"/tool", ToolHandler),
-	(r"/tool/\d+", ToolHandler),
+	(r"/", ToolHandler),
+	(r"/\d+", ToolHandler),
+	(r"/host", HostHandler),
+	(r"/host/\d+", HostHandler),
 	(r"/ajax-handler/(\S+)", AjaxHandler),
 	(r"/\S+", MainHandler),
 ], **settings)
