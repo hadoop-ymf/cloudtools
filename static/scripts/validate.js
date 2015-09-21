@@ -6,18 +6,20 @@
         validate: {
             items: [],
             _ps: [],
-            check: function(){
+            check: function () {
+                var that = this;
                 var ok_ = true;
-                for (var _ in _ps) {
-                    var els = _ps[_]['els'];
+                for (var _ in that._ps) {
+                    var els = that._ps[_]['els'];
                     els.each(function () {
                         var this_ = $(this);
-                        ok_ = ok_ && _ps[_](null, null, this_);
+                        ok_ = that._ps[_](null, null, this_) && ok_;
                     });
                 }
                 return ok_;
             },
             register: function (data) {
+                var that = this;
                 var _className = data.className;
                 var _elements = data.elements;
                 var els = undefined;
@@ -37,7 +39,7 @@
                 var _validMethodNames = data.validMethodNames;
                 if (!!_validMethodNames) {
                     for (var _ in _validMethodNames) {
-                        var m = methods[_validMethodNames[_]];
+                        var m = that.methods[_validMethodNames[_]];
                         if (!!m) {
                             validMethods.push(m);
                         }
@@ -54,19 +56,27 @@
                 var _msgPanel = data.msgPanel;
                 var msgPanel = undefined;
                 if (!!_msgPanel && _msgPanel.length > 0) {
-                    var pan = $('.' + msgPanel);
+                    var pan = $('.' + _msgPanel);
                     if (pan.size() > 0) {
                         msgPanel = pan;
                     }
                 }
-                var _msgMode = !data.msgMode ? 'append' : data.msgMode;//append first
+                var _msgMode = !data.msgMode ? 'first' : data.msgMode;//append first
                 var _getValMethod = data.getValMethod;
+                data.messages = {};
 
                 //process
 
                 var process = function (index, element, this_) {
                     if (!this_) {
                        this_ = $(this);
+                    }
+                    var name_ = '__' + Math.ceil(Math.random() * 9999) + '__';
+                    var attrName = this_.attr('name');//TODO custom attribute name
+                    if (!!attrName && attrName.length > 0) {
+                        name_ = attrName;
+                    } else {
+                        this_.attr('name', name_);
                     }
                     var val_ = undefined;
                     if (!!_getValMethod) {
@@ -75,23 +85,22 @@
                         val_ = this_.val();
                     }
                     var ok_ = true;
+                    var _messages = data.messages[name_] = [];
                     for (var _ in validMethods) {
                         var res = validMethods[_](val_);// {'status': [ Boolean ], 'message': [ String ]}
                         if (!!res['status']) {
                             continue;
                         }
-                        ok_ = false, msgPanel.text('');
+                        ok_ = false;
                         if (!!msgPanel) {
                             var b_ = false;
+                            _messages.push(res['message']);
                             switch (_msgMode) {
                                 case 'first':
-                                    msgPanel.text(res['message']);
                                     b_ = true;
                                     break;
                                 case 'append':
                                 default:
-                                    var rawText = msgPanel.text();
-                                    msgPanel.text(rawText + res['message']);// TODO split message
                                     break;
                             }
                             if (b_) {
@@ -99,6 +108,23 @@
                             }
                         }
                     }
+                    msgPanel.html('');
+                    var msgTxt = '';
+                    for (var name_ in data.messages) {
+                        var msgs_ = data.messages[name_];
+                        if (!!name_ && name_.length > 0) {
+                            for (var _ in msgs_) {
+                                if (name_.startsWith('__') && name_.endsWith('__')) {
+                                    msgTxt += msgs_[_];//TODO split message
+                                } else {
+                                    msgTxt += name_ + ': ' + msgs_[_];//TODO split message //TODO format message string
+                                }
+                                msgTxt += '<BR />';//TODO temp
+                            }
+                        }
+                    }
+                    msgPanel.html(msgTxt);
+
                     if (ok_) {
                         if (!!_correctClassName && _correctClassName.length > 0) {
                             this_.addClass(_correctClassName);
@@ -132,8 +158,8 @@
 
                 //register
 
-                items.push(data);
-                _ps.push(process);
+                that.items.push(data);
+                that._ps.push(process);
 
             },
             methods: {
@@ -143,6 +169,9 @@
                             status: false,
                             message: 'Field is required'// message template
                         };
+                    }
+                    return {
+                        status: true
                     }
                 },
                 ipAddress: function (val) { },
