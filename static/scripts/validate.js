@@ -128,22 +128,22 @@
                     if (ok_) {
                         if (!!_correctClassName && _correctClassName.length > 0) {
                             this_.addClass(_correctClassName);
-                            (function (this_, _correctClassName) {
-                                this_.one('change', function () {// TODO custom event
-                                    this_.removeClass(_correctClassName);
-                                });
-                            })(this_, _correctClassName);
+                            this_.removeClass(_failedClassName);
+                            //(function (this_, _correctClassName) {
+                            //    this_.one('change', function () {// TODO custom event
+                            //        this_.removeClass(_correctClassName);
+                            //    });
+                            //})(this_, _correctClassName);
                         }
                     } else {
-                        msgPanel.css('display', 'block');// TODO custom display show mode
                         if (!!_failedClassName && _failedClassName.length > 0) {
                             this_.addClass(_failedClassName);
-                            (function (this_, _failedClassName, msgPanel) {
-                                this_.one('change', function () {// TODO custom event
-                                    this_.removeClass(_failedClassName);
-                                    msgPanel.css('display', '');// TODO custom display hidden mode
-                                });
-                            })(this_, _failedClassName, msgPanel);
+                            this_.removeClass(_correctClassName);
+                            //(function (this_, _failedClassName, msgPanel) {
+                            //    this_.one('change', function () {// TODO custom event
+                            //        this_.removeClass(_failedClassName);
+                            //    });
+                            //})(this_, _failedClassName, msgPanel);
                         }
                     }
                     return ok_;
