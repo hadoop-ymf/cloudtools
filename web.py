@@ -28,23 +28,6 @@ def deamon(chdir = False):
 	os.setsid()
 	os.umask(0)
 
-class HostHandler(tornado.web.RequestHandler):
-	def load(self):
-		if not 'data' in dir(self):
-			f = open('data.json', 'r')
-			jsonstr = f.read()
-			self.data = json.loads(jsonstr)
-			f.close()
-
-	def get(self):
-		self.load()
-		index = self.request.uri
-		index = index[index.rfind('/host/') + 6:]
-		if index is None or len(index) == 0:
-			index = 1
-		index = int(index)
-		self.render("html/host.html", icons = self.data[(index - 1) * 24: index * 24])
-
 class ToolHandler(tornado.web.RequestHandler):
 	def load(self):
 		if not 'platform' in dir(self):
@@ -147,8 +130,6 @@ settings = {
 application = tornado.web.Application([
 	(r"/", ToolHandler),
 	(r"/\d+", ToolHandler),
-	(r"/host", HostHandler),
-	(r"/host/\d+", HostHandler),
 	(r"/ajax-handler/(\S+)", AjaxHandler),
 	(r"/\S+", MainHandler),
 ], **settings)
