@@ -1,5 +1,5 @@
 > sudo apt-get install python-dev python-pip python-pycurl python-simplejson  
-> sudo pip install tornado 
+> sudo pip install tornado  
 > sudo apt-get install libffi-dev  
 > sudo pip install paramiko  
 
