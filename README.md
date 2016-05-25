@@ -2,6 +2,7 @@
 > sudo pip install tornado  
 > sudo apt-get install libffi-dev  
 > sudo pip install paramiko  
+> pip install cryptography --force-reinstall
 
     wget https://github.com/codemeow5/cloudtools/raw/master/modules/mqtt/mosquitto-install.sh
     chmod u+x mosquitto-install.sh
